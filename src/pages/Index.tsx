@@ -1,17 +1,19 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProfileCard from "@/components/ProfileCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { profiles, Profile } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [currentProfiles, setCurrentProfiles] = useState<Profile[]>(profiles);
   const [likedProfiles, setLikedProfiles] = useState<Profile[]>([]);
   const [passedProfiles, setPassedProfiles] = useState<Profile[]>([]);
   const [showWelcome, setShowWelcome] = useState(true);
+  const navigate = useNavigate();
   
   const handleLike = (id: string) => {
     const likedProfile = currentProfiles.find(profile => profile.id === id);
@@ -50,13 +52,38 @@ const Index = () => {
               Designed to be deleted. HeartString helps you find the right person by focusing on what matters most - genuine connection.
             </p>
             
-            <Button 
-              onClick={handleStartSwiping}
-              className="w-full bg-purple hover:bg-purple-dark text-white mb-3 font-medium py-6"
-            >
-              Start Meeting People
-              <Sparkles className="h-4 w-4 ml-2" />
-            </Button>
+            <div className="space-y-3">
+              <Button 
+                onClick={handleStartSwiping}
+                className="w-full bg-purple hover:bg-purple-dark text-white mb-3 font-medium py-6"
+              >
+                Start Meeting People
+                <Sparkles className="h-4 w-4 ml-2" />
+              </Button>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => navigate("/login")}
+                  variant="outline" 
+                  className="w-1/2 border-purple text-purple hover:bg-purple-light"
+                >
+                  Log In
+                </Button>
+                <Button 
+                  onClick={() => navigate("/signup")}
+                  variant="outline" 
+                  className="w-1/2 border-purple text-purple hover:bg-purple-light"
+                >
+                  Sign Up
+                </Button>
+              </div>
+              
+              <p className="text-xs text-gray-400 pt-2">
+                By continuing, you agree to our{" "}
+                <Link to="#" className="text-purple underline">Terms of Service</Link> and{" "}
+                <Link to="#" className="text-purple underline">Privacy Policy</Link>
+              </p>
+            </div>
           </div>
         ) : (
           <>
