@@ -1,31 +1,34 @@
 
+import { useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Bell, User, Menu } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { AuthContext } from "@/App";
 
 const Header = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { userProfile } = useContext(AuthContext);
   
   const handleNotifications = () => {
     toast({
       title: "No new notifications",
-      description: "You're all caught up!"
+      description: `You're all caught up${userProfile?.name ? ', ' + userProfile.name : ''}!`
     });
   };
   
   const handleMessages = () => {
     toast({
       title: "Messages",
-      description: "No new messages yet"
+      description: `No new messages yet${userProfile?.name ? ', ' + userProfile.name : ''}`
     });
   };
   
   const handleProfile = () => {
     toast({
       title: "Profile",
-      description: "Your profile is looking great!"
+      description: `Your profile is looking great${userProfile?.name ? ', ' + userProfile.name : ''}!`
     });
   };
 

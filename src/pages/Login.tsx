@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Eye, EyeOff, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../App";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -23,6 +24,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -33,13 +35,24 @@ const Login = () => {
   });
 
   const onSubmit = (values: LoginFormValues) => {
-    // This would be replaced with actual authentication logic
     console.log("Login form submitted:", values);
-    toast({
-      title: "Welcome back!",
-      description: "Successfully logged in to HeartString.",
-    });
-    navigate("/");
+    
+    // Use the login function from context
+    const success = login(values.email, values.password);
+    
+    if (success) {
+      toast({
+        title: "Welcome back!",
+        description: "Successfully logged in to HeartString.",
+      });
+      navigate("/");
+    } else {
+      toast({
+        title: "Login failed",
+        description: "Please check your email and password.",
+        variant: "destructive"
+      });
+    }
   };
 
   const togglePasswordVisibility = () => {
