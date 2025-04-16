@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "@/components/ProfileCard";
@@ -8,11 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Heart, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// Import the tab components
+import DiscoverTab from "./tabs/Discover";
+import LikesTab from "./tabs/Likes";
+import MessagesTab from "./tabs/Messages";
+import NotificationsTab from "./tabs/Notifications";
+import ProfileTab from "./tabs/Profile";
+
 const Index = () => {
   const [currentProfiles, setCurrentProfiles] = useState<Profile[]>(profiles);
   const [likedProfiles, setLikedProfiles] = useState<Profile[]>([]);
   const [passedProfiles, setPassedProfiles] = useState<Profile[]>([]);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [activeTab, setActiveTab] = useState("discover");
   const navigate = useNavigate();
   
   const handleLike = (id: string) => {
@@ -33,6 +42,33 @@ const Index = () => {
   
   const handleStartSwiping = () => {
     setShowWelcome(false);
+  };
+  
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "discover":
+        return (
+          <DiscoverTab 
+            currentProfiles={currentProfiles} 
+            onLike={handleLike} 
+            onPass={handlePass} 
+          />
+        );
+      case "likes":
+        return <LikesTab likedProfiles={likedProfiles} />;
+      case "messages":
+        return <MessagesTab />;
+      case "notifications":
+        return <NotificationsTab />;
+      case "profile":
+        return <ProfileTab />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -86,35 +122,11 @@ const Index = () => {
             </div>
           </div>
         ) : (
-          <>
-            {currentProfiles.length > 0 ? (
-              <div className="w-full">
-                <ProfileCard 
-                  profile={currentProfiles[0]} 
-                  onLike={handleLike} 
-                  onPass={handlePass} 
-                />
-              </div>
-            ) : (
-              <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-                <h3 className="text-xl font-semibold mb-2">That's everyone for now!</h3>
-                <p className="text-gray-600 mb-4">Check back soon for new profiles</p>
-                <Button 
-                  onClick={() => {
-                    setCurrentProfiles([...profiles]);
-                    setLikedProfiles([]);
-                    setPassedProfiles([]);
-                  }}
-                >
-                  Reset Profiles
-                </Button>
-              </div>
-            )}
-          </>
+          renderTabContent()
         )}
       </main>
       
-      <Footer />
+      {!showWelcome && <Footer activeTab={activeTab} onTabChange={handleTabChange} />}
     </div>
   );
 };
